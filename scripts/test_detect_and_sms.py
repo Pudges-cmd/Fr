@@ -43,18 +43,28 @@ def main() -> None:
 
 	last_sent: dict[str, float] = {}
 
+	print("Starting detection loop. Press Ctrl+C to stop.")
+	
 	try:
-		print("Starting detection loop. Press Ctrl+C to stop.")
 		while True:
 			ok, frame = cap.read()
 			if not ok:
-				break
+				print("Camera read failed, retrying...")
+				time.sleep(1)
+				continue
 			
 			# Detect objects
 			results = detector.detect(frame)
 			counts = defaultdict(int)
 			for r in results:
 				counts[r["label"]] += 1
+			
+			# Print detection results
+			if counts:
+				msg = format_message(counts)
+				print(f"Detected: {msg}")
+			else:
+				print("No objects detected")
 			
 			# Send SMS if objects detected and cooldown passed
 			total = sum(counts.values())
@@ -63,13 +73,15 @@ def main() -> None:
 				now = time.time()
 				if now - last_sent.get(key, 0) >= EVENT_COOLDOWN_SECONDS:
 					msg = format_message(counts)
-					print(f"Detected: {msg}")
 					if modem:
 						print(f"Sending SMS: {msg}")
 						modem.send_sms(DESTINATION_NUMBERS, msg)
 					last_sent[key] = now
 			
-			time.sleep(0.05)
+			time.sleep(0.1)  # Small delay to prevent overwhelming CPU
+			
+	except KeyboardInterrupt:
+		print("\nStopping detection...")
 	finally:
 		cap.release()
 		if modem:
