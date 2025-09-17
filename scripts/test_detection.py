@@ -29,7 +29,9 @@ def main() -> None:
 		while True:
 			ok, frame = cap.read()
 			if not ok:
-				break
+				print("Camera read failed, retrying...")
+				time.sleep(1)
+				continue
 
 			# Detect objects
 			results = detector.detect(frame)
@@ -54,7 +56,7 @@ def main() -> None:
 			else:
 				print("No objects detected")
 
-			time.sleep(0.1)  # Small delay to prevent overwhelming output
+			time.sleep(0.1)  # Small delay to prevent overwhelming CPU
 
 	except KeyboardInterrupt:
 		print("\nStopping detection...")
