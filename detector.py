@@ -245,17 +245,10 @@ def main():
                     sms_handler.send_sms(DESTINATION_NUMBERS, message)
                     detector.last_sent["any"] = now
             
-            # Optional: Draw detections on frame (for debugging)
-            for det in detections:
-                x, y, w, h = det["box"]
-                label = f"{det['label']}: {det['confidence']:.2f}"
-                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-                cv2.putText(frame, label, (x, y-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-            
-            # Display frame (optional, comment out for headless operation)
-            # cv2.imshow('Detection', frame)
-            # if cv2.waitKey(1) & 0xFF == ord('q'):
-            #     break
+            # Print detection results
+            if detections:
+                for det in detections:
+                    print(f"Detected: {det['label']} (confidence: {det['confidence']:.2f})")
             
             time.sleep(1.0 / TARGET_FPS)  # Control frame rate
             
@@ -273,7 +266,6 @@ def main():
             PID_FILE.unlink(missing_ok=True)
         except:
             pass
-        cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
