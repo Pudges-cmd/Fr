@@ -1,0 +1,23 @@
+[Unit]
+Description=YOLOv5 Detection and SMS Alert System
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/Fred
+ExecStart=/home/pi/Fred/start.sh
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Environment variables
+Environment=PYTHONPATH=/home/pi/Fred
+Environment=CONFIDENCE_THRESHOLD=0.35
+Environment=EVENT_COOLDOWN_SECONDS=60
+
+[Install]
+WantedBy=multi-user.target
