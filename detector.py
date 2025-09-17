@@ -225,7 +225,8 @@ def main():
         while True:
             ret, frame = cap.read()
             if not ret:
-                time.sleep(0.1)
+                print("Camera read failed, retrying...")
+                time.sleep(1)
                 continue
             
             # Detect objects
@@ -249,8 +250,10 @@ def main():
             if detections:
                 for det in detections:
                     print(f"Detected: {det['label']} (confidence: {det['confidence']:.2f})")
+            else:
+                print("No objects detected")
             
-            time.sleep(1.0 / TARGET_FPS)  # Control frame rate
+            time.sleep(0.1)  # Small delay to prevent overwhelming CPU
             
     except KeyboardInterrupt:
         print("\nShutting down...")
